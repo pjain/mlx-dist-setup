@@ -2,18 +2,18 @@
 
 This project contains a set of scripts to help you set up a distributed environment using **Open MPI** and **mlx-lm** on macOS machines (e.g., Apple Silicon) and run a distributed LLM inference job across multiple hosts.
 
-## Overview of Scripts
+## Overview of Scripts (for running sequence, see next section)
 
 1. **`setup_mlxdist.sh`**  
    - **Purpose**: Creates (or re-creates) a clean conda environment named `mlxdist` with Python 3.12, installs Open MPI and `mlx-lm`, downloads `pipeline_generate.py`, and generates a `hosts.json` file.  
    - **Important**:  
      - Any existing conda environment named **`mlxdist`** will be **removed** and replaced.  
      - The project folder `/Users/alex/Code/ml/mlxdist` is also cleared out before setup.  
-   - **Where to run**: Typically on **each** machine (e.g., `az-ms-1` and `az-ms-2`) if you want the same environment on each.
+   - **Where to run**: Typically on **each** machine (e.g., `host1` and `host2`) if you want the same environment on each.
 
 2. **`copy_setup_script.sh`**  
    - **Purpose**: Copies the setup scripts (and optionally other scripts) from one machine to the same path on remote machines.  
-   - **Where to run**: On the **main** machine (e.g., `az-ms-1`) that has the scripts in `/Users/alex/Code/ml/`. It will SSH and `scp` them to other hosts.  
+   - **Where to run**: On the **main** machine (e.g., `host1`) that has the scripts in `/Users/alex/Code/ml/`. It will SSH and `scp` them to other hosts.  
    - **Key actions**:
      - Copies `setup_mlxdist.sh`, `set_mem_limit.sh`, and `run_mlx.sh` to `/Users/alex/Code/ml/` on each remote machine in the `HOSTS` array.
 
@@ -64,32 +64,60 @@ This project contains a set of scripts to help you set up a distributed environm
 4. **macOS firewall** or other firewalls must allow MPI traffic across the network interface.  
 5. **Confirm the correct interface** (by default, we assume `en0`). If needed, adjust to `en1` or another interface in `run_mlx.sh`.
 
+## Enabling SSH and Changing Hostname
+
+### Enabling SSH
+
+1. **Open System Preferences**:
+   - Go to `System Preferences` > `Sharing`.
+2. **Enable Remote Login**:
+   - Check the box next to `Remote Login`.
+   - This will allow SSH access to your machine.
+3. **Allow Access for All Users or Specific Users**:
+   - You can choose to allow access for all users or specify which users can log in.
+
+### Changing Hostname
+
+1. **Open Terminal**:
+   - You can find Terminal in `Applications` > `Utilities` or by searching for it in Spotlight.
+2. **Change the Hostname**:
+   - Run the following command to change the hostname:
+     ```bash
+     sudo scutil --set HostName <new-hostname>
+     ```
+     Replace `<new-hostname>` with your desired hostname.
+3. **Verify the Change**:
+   - Run the following command to verify the change:
+     ```bash
+     hostname
+     ```
+     This should display the new hostname you set.
+
 ## Order of Operations
 
-Below is a suggested workflow for **two machines** (`az-ms-1` and `az-ms-2`). Adjust as needed for more machines.
+Below is a suggested workflow for **two machines** (`host1` and `host2`). Adjust as needed for more machines.
 
-1. **On the primary machine (e.g., `az-ms-1`):**
+1. **On the primary machine (e.g., `host1`)**:
    1. **Ensure conda is installed** and initialized (`conda init`). Make sure `conda activate` works in your shell.  
-   2. **Run `setup_mlxdist.sh`** (if you want to set up the environment on this machine). For example:
+   2. **Run `copy_setup_script.sh`** to copy these scripts (including `setup_mlxdist.sh`, `run_mlx.sh`, `set_mem_limit.sh`) to the **other** machine(s):
+      ```bash
+      ./copy_setup_script.sh
+      ```
+   3. **Run `setup_mlxdist.sh`** (if you want to set up the environment on this machine). For example:
       ```bash
       cd /Users/alex/Code/ml
       ./setup_mlxdist.sh
       ```
       > **Note**: This will remove any existing `mlxdist` conda environment and recreate it.  
-   3. **Run `set_mem_limit.sh`** (if you need more memory for iogpu on an M-series Mac):
+   4. **Run `set_mem_limit.sh`** (if you need more memory for iogpu on an M-series Mac):
       ```bash
       ./set_mem_limit.sh
-      # Might prompt for sudo password
       ```
       Remember, the setting will revert on reboot or new session.  
-   4. **Run `copy_setup_script.sh`** to copy these scripts (including `setup_mlxdist.sh`, `run_mlx.sh`, `set_mem_limit.sh`) to the **other** machine(s):
-      ```bash
-      ./copy_setup_script.sh
-      ```
    5. **SSH** into the other machine(s) to continue setup.
 
-2. **On the secondary machine(s) (e.g., `az-ms-2`):**
-   1. **SSH** from `az-ms-1` or open a terminal on `az-ms-2`.  
+2. **On the secondary machine(s) (e.g., `host2`)**:
+   1. **SSH** from `host1` or open a terminal on `host2`.  
    2. **Run `setup_mlxdist.sh`** to create the same `mlxdist` environment:
       ```bash
       cd /Users/alex/Code/ml
@@ -103,10 +131,10 @@ Below is a suggested workflow for **two machines** (`az-ms-1` and `az-ms-2`). Ad
    4. Ensure you have the **same** environment path `/Users/alex/miniconda3/envs/mlxdist` on each machine.
 
 3. **Check SSH connectivity**:
-   - Ensure you can SSH passwordlessly between `az-ms-1` and `az-ms-2`. This is essential for MPI.  
+   - Ensure you can SSH passwordlessly between `host1` and `host2`. This is essential for MPI.  
    
 4. **Launch the distributed job**:
-   - On the machine you wish to run the job from (e.g., `az-ms-1`), use:
+   - On the machine you wish to run the job from (e.g., `host1`), use:
      ```bash
      cd /Users/alex/Code/ml/mlxdist
      ./run_mlx.sh
@@ -116,7 +144,7 @@ Below is a suggested workflow for **two machines** (`az-ms-1` and `az-ms-2`). Ad
      - Force MPI to use the specified interface (default `en0`; change it if your active connection is on `en1` or something else).  
      - Run `mlx.launch --backend mpi ...` with your `pipeline_generate.py` across both machines listed in `hosts.json`.  
 
-If everything is configured correctly, MPI will start processes on both `az-ms-1` and `az-ms-2`, and you’ll see the generated output.
+If everything is configured correctly, MPI will start processes on both `host1` and `host2`, and you’ll see the generated output.
 
 ## Troubleshooting
 
