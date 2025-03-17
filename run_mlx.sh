@@ -13,7 +13,8 @@ PROJECT_PATH="/Users/alex/Code/ml/mlxdist"
 
 # If you haven’t already sourced your conda setup, do so:
 if [ -f "$CONDA_SETUP" ]; then
-  source "$CONDA_SETUP"
+  # Use "." instead of "source" for POSIX compatibility
+  . "$CONDA_SETUP"
 else
   echo "WARNING: Can't find conda setup script at $CONDA_SETUP"
   echo "         Make sure conda is properly set up before proceeding."

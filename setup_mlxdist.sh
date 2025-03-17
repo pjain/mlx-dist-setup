@@ -21,7 +21,7 @@ conda create -n "$CONDA_ENV" python=3.12 -y
 
 echo "5. Sourcing conda script (so 'conda activate' will work) ..."
 if [ -f "$CONDA_SCRIPT" ]; then
-  source "$CONDA_SCRIPT"
+  . "$CONDA_SCRIPT"
 else
   echo "WARNING: Can't find conda activation script at $CONDA_SCRIPT"
   echo "         Ensure conda is installed or adjust the path."
