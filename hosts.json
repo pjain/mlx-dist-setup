@@ -1,5 +1,5 @@
 [
-  {"ssh": "az-ms-1"},
-  {"ssh": "az-ms-2"},
-  {"ssh": "az-ms-3"}
+  {"ssh": "hostname1"},
+  {"ssh": "hostname2"},
+  {"ssh": "hostname3"}
 ]
