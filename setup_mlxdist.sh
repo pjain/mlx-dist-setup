@@ -35,13 +35,13 @@ conda install -c conda-forge openmpi -y
 pip install -U mlx-lm
 
 echo "8. Downloading pipeline_generate.py ..."
-curl -O https://raw.githubusercontent.com/ml-explore/mlx-examples/refs/heads/main/llms/mlx_lm/examples/pipeline_generate.py
+curl -O https://raw.githubusercontent.com/ml-explore/mlx-lm/refs/heads/main/mlx_lm/examples/pipeline_generate.py
 
 #echo "9. Creating hosts.json ..."
 #cat <<EOF > hosts.json
 #[
-#  {"ssh": "az-ms-1"},
-#  {"ssh": "az-ms-2"}
+#  {"ssh": "hostname1"},
+#  {"ssh": "hostname2"}
 #]
 #EOF
 
