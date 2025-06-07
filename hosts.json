@@ -1,5 +1,5 @@
 [
-  {"ssh": "hostname1"},
-  {"ssh": "hostname2"},
-  {"ssh": "hostname3"}
+  {"ssh": "laforge.local"},
+  {"ssh": "legolas.local"},
+  {"ssh": "picard.local"}
 ]

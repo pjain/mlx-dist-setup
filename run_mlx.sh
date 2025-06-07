@@ -3,13 +3,13 @@ set -e
 
 # Path to your conda setup script (may vary by system).
 # Adjust if conda is installed in a different location.
-CONDA_SETUP="/Users/alex/miniconda3/etc/profile.d/conda.sh"
+CONDA_SETUP="${HOME}/miniconda3/etc/profile.d/conda.sh"
 
 # Name of the conda environment
 CONDA_ENV="mlxdist"
 
 # Path to your MLX project
-PROJECT_PATH="/Users/alex/Code/ml/mlxdist"
+PROJECT_PATH="${HOME}/Code/ml/mlxdist"
 
 # If you haven’t already sourced your conda setup, do so:
 if [ -f "$CONDA_SETUP" ]; then

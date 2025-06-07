@@ -3,7 +3,8 @@ set -e
 
 # Paths and environment names
 PROJECT_PATH=$PWD
-CONDA_SCRIPT="/Users/alex/miniconda3/etc/profile.d/conda.sh"
+#CONDA_SCRIPT="${HOME}/miniconda3/etc/profile.d/conda.sh"
+CONDA_SCRIPT="/opt/miniconda3/etc/profile.d/conda.sh"
 CONDA_ENV="mlxdist"
 
 #echo "1. Removing old project folder (if any) at $PROJECT_PATH ..."
@@ -27,6 +28,7 @@ else
   echo "         Ensure conda is installed or adjust the path."
 fi
 
+conda init
 echo "6. Activating conda environment '$CONDA_ENV' ..."
 conda activate "$CONDA_ENV"
 
