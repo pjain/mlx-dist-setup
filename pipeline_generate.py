@@ -83,7 +83,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="LLM pipelined inference example")
     parser.add_argument(
         "--model",
-        default="mlx-community/DeepSeek-R1-3bit",
+        default="mlx-community/DeepSeek-R1-0528-Qwen3-8B-6bit",
         help="HF repo or path to local model.",
     )
     parser.add_argument(

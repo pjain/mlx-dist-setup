@@ -3,13 +3,13 @@ set -e
 
 # Path to your conda setup script (may vary by system).
 # Adjust if conda is installed in a different location.
-CONDA_SETUP="${HOME}/miniconda3/etc/profile.d/conda.sh"
+CONDA_SETUP="/opt/miniconda3/etc/profile.d/conda.sh"
 
 # Name of the conda environment
 CONDA_ENV="mlxdist"
 
 # Path to your MLX project
-PROJECT_PATH="${HOME}/Code/ml/mlxdist"
+PROJECT_PATH="${HOME}/projects/mlx-dist-setup"
 
 # If you haven’t already sourced your conda setup, do so:
 if [ -f "$CONDA_SETUP" ]; then
@@ -34,6 +34,6 @@ mlx.launch \
   "$PROJECT_PATH/pipeline_generate.py" \
   --prompt "What number is larger 6.9 or 6.11?" \
   --max-tokens 128 \
-  --model mlx-community/DeepSeek-Coder-V2-Lite-Instruct-4bit-mlx
+  --model mlx-community/DeepSeek-R1-0528-Qwen3-8B-6bit
 
 echo "MLX run complete!"
